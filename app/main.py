@@ -1,22 +1,22 @@
-import sys
+import streamlit as st
 from app.openai_utils import OpenAIUtils
 from app.project_generator import ProjectGenerator
 from app.file_creator import FileCreator
 
 def main():
-    print("Welcome to the AI App Builder!")
-    
+    st.title("AI App Builder")
+
     # Initialize OpenAIUtils
     openai_utils = OpenAIUtils()
 
     # Ask for app description
-    app_description = input("Please enter a short description of your app: ")
+    app_description = st.text_input("Please enter a short description of your app:")
 
     # Propose app name using OpenAI
     app_name = openai_utils.generate_app_name(app_description)
     app_name_confirmed = False
     while not app_name_confirmed:
-        user_app_name = input(f"Proposed app name: {app_name}. Press Enter to confirm or type a new name: ")
+        user_app_name = st.text_input(f"Proposed app name: {app_name}. Press Enter to confirm or type a new name:")
         if user_app_name.strip() == "":
             app_name_confirmed = True
         else:
@@ -25,7 +25,7 @@ def main():
     # Collect app features
     features = []
     while True:
-        feature = input("Please enter a feature for your app (or type 'done' to finish): ")
+        feature = st.text_input("Please enter a feature for your app (or type 'done' to finish):")
         if feature.lower() == "done":
             break
         else:
@@ -35,7 +35,7 @@ def main():
     project_structure = openai_utils.generate_project_structure(app_name, features)
     project_structure_confirmed = False
     while not project_structure_confirmed:
-        user_feedback = input(f"Current project structure:\n{project_structure}\nType any comments or 'done' to confirm: ")
+        user_feedback = st.text_area(f"Current project structure:\n{project_structure}\nType any comments or 'done' to confirm:")
         if user_feedback.lower() == "done":
             project_structure_confirmed = True
         else:
@@ -49,7 +49,7 @@ def main():
     file_creator = FileCreator(project_generator.workspace_directory, openai_utils)
     file_creator.create_project_files(project_structure)
 
-    print("Project successfully created!")
+    st.success("Project successfully created!")
 
 if __name__ == "__main__":
     main()
